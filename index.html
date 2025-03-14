@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Orientation in 3D</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #container {
+      width: 400px;
+      height: 400px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      border-radius: 15px;
+      border: 1px solid #ccc;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .cube {
+      width: 200px;
+      height: 200px;
+      position: absolute;
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease-out;
+      animation: cubeRotation 5s infinite linear;
+    }
+
+    .cube div {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: #4caf50;
+      border: 2px solid #333;
+      box-sizing: border-box;
+    }
+
+    .cube .front  { transform: rotateY(  0deg) translateZ(100px); }
+    .cube .back   { transform: rotateY(180deg) translateZ(100px); }
+    .cube .left   { transform: rotateY(-90deg) translateZ(100px); }
+    .cube .right  { transform: rotateY( 90deg) translateZ(100px); }
+    .cube .top    { transform: rotateX( 90deg) translateZ(100px); }
+    .cube .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+    @keyframes cubeRotation {
+      0% { transform: rotateX(0deg) rotateY(0deg); }
+      100% { transform: rotateX(360deg) rotateY(360deg); }
+    }
+
+    #orientation-info {
+      position: absolute;
+      top: 250px;
+      font-size: 16px;
+      color: #333;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #orientation-info p {
+      margin: 5px 0;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .info {
+      color: #009688;
+      font-size: 16px;
+    }
+
+    .message {
+      color: #FF5722;
+      font-size: 14px;
+    }
+
+    #interactive-buttons {
+      display: flex;
+      margin-top: 30px;
+      justify-content: space-around;
+      width: 100%;
+    }
+
+    .button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Interactive 3D Orientation</h1>
+  <div id="container">
+    <div class="cube" id="cube">
+      <div class="front"></div>
+      <div class="back"></div>
+      <div class="left"></div>
+      <div class="right"></div>
+      <div class="top"></div>
+      <div class="bottom"></div>
+    </div>
+    <div id="orientation-info">
+      <p>Orientation:</p>
+      <p id="orientation-vector">X: 0° Y: 0° Z: 0°</p>
+      <p class="info">Device Orientation Vector</p>
+    </div>
+  </div>
+
+  <div id="interactive-buttons">
+    <button class="button" id="resetButton">Reset Orientation</button>
+    <button class="button" id="toggleAnimation">Toggle 3D Animation</button>
+  </div>
+
+  <script>
+    let alpha = 0, beta = 0, gamma = 0;
+
+    function handleOrientation(event) {
+      alpha = event.alpha;
+      beta = event.beta;
+      gamma = event.gamma;
+
+      const cube = document.getElementById("cube");
+      cube.style.transform = `rotateX(${beta}deg) rotateY(${gamma}deg) rotateZ(${alpha}deg)`;
+
+      document.getElementById("orientation-vector").textContent = 
+        `X: ${beta.toFixed(2)}° Y: ${gamma.toFixed(2)}° Z: ${alpha.toFixed(2)}°`;
+    }
+
+    window.addEventListener("deviceorientation", handleOrientation);
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      alpha = beta = gamma = 0;
+      document.getElementById("orientation-vector").textContent = `X: 0° Y: 0° Z: 0°`;
+    });
+
+    let isAnimating = true;
+    document.getElementById("toggleAnimation").addEventListener("click", () => {
+      isAnimating = !isAnimating;
+      if (isAnimating) {
+        document.getElementById("cube").style.animation = "cubeRotation 5s infinite linear";
+      } else {
+        document.getElementById("cube").style.animation = "none";
+      }
+    });
+  </script>
+
+</body>
+</html>
